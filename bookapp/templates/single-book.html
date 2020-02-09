@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Book</title>
+        <meta name="description" content="View book detail and add authors">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+
+    </head>
+    <body>
+        <div class="container wrapper">
+            <div class="container">
+                <h1>{{ book.title }}</h1>
+                <div class = "row">
+                    <div class="col-sm-9">
+                        <p><span class="font-weight-bold">ID:</span> {{ book.id }}</p>
+                        <p><span class="font-weight-bold">Notes:</span> {{book.desc}}</p>
+                        <p class="font-weight-bold">Authors:</p>
+                        <ul>
+                            {% for a in book.authors.all %}
+                            <li><a href="/author/{{a.id}}">{{a.first_name}} {{a.last_name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-sm-3">
+                        <img class="img-books small" src="{% static 'books.png' %}" alt="person using typewriter">
+                    </div> 
+                </div>
+            {% if available_authors|length > 0 %}
+                <p class="font-weight-bold">Add an Author:</p>
+                <form class="space-after" action="/add-author-to-book" method="post">
+                    {% csrf_token %} 
+                    <input type="hidden" name="book_id" value="{{book.id}}">
+                    
+                    <select class="form-control space-after" name="author_id">
+                        <option value="" selected disabled hidden>Select an Author</option>
+                        {% for a in available_authors %}
+                            <option value="{{a.id}}"">{{ a.first_name }} {{ a.last_name }}</option>
+                        {% endfor %}
+                    </select>                    
+                    <button class="btn btn-primary" type="submit">Add</button>
+                </form>
+            {% else %}
+                <p>This book has been written by every available author in the database!</p>
+            {% endif %}
+                <a href="/">View all books</a>
+            </div>            
+        </div>
+    </body>
+</html>

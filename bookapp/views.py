@@ -2,11 +2,8 @@ from django.shortcuts import render, HttpResponse, redirect
 from bookapp.models import Book, Author
 
 def index(request):
-    books = []
-    for b in Book.objects.all():
-        books.append(b)
     context = {
-        "books" : books
+        "books" : Book.objects.all()
     }
     return render(request, "index.html", context)
 
@@ -24,8 +21,7 @@ def book(request, id):
     b = Book.objects.get(id=id)
     available_authors = []
     for a in Author.objects.all():
-        ct = a.books.filter(id=id).count()
-        if ct == 0:
+        if not a.books.filter(id=id).exists():
             available_authors.append(a)
     context = { 
         "book" : b,
@@ -34,11 +30,8 @@ def book(request, id):
     return render(request, "single-book.html", context)
 
 def authors(request):
-    authors=[]    
-    for a in Author.objects.all():
-        authors.append(a)
     context = {
-        "authors" : authors
+        "authors" : Author.objects.all()
     }
     return render(request, "authors.html", context)
 
@@ -57,8 +50,7 @@ def author(request, id):
     a = Author.objects.get(id=id)   
     available_books = []
     for b in Book.objects.all():
-        ct = b.authors.filter(id=id).count()
-        if ct == 0:
+        if not b.authors.filter(id=id).exists():
             available_books.append(b)
     
     context = { 
